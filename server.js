@@ -6,10 +6,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const MP_TOKEN = process.env.MERCADOPAGO_ACCESS_TOKEN || 'TU_ACCESS_TOKEN_AQUI';
-
 const client = new MercadoPagoConfig({ 
-    accessToken: MP_TOKEN 
+    accessToken: 'TU_TOKEN_REAL_AQUI' 
 });
 const preference = new Preference(client);
 
@@ -26,7 +24,7 @@ app.get('/', (req, res) => {
                 .card { background: #1e1e1e; padding: 2rem; border-radius: 12px; text-align: center; width: 90%; max-width: 350px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
                 input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #fff; box-sizing: border-box; }
                 button { width: 100%; padding: 12px; border: none; border-radius: 6px; background: #009ee3; color: white; font-weight: bold; cursor: pointer; }
-                a { color: #00e676; text-decoration: none; font-weight: bold; display: block; margin-top: 15px; }
+                a { color: #00e676; text-decoration: none; font-weight: bold; display: block; margin-top: 15px; word-break: break-all; }
             </style>
         </head>
         <body>
@@ -54,7 +52,7 @@ app.get('/', (req, res) => {
                         if (data.init_point) {
                             div.innerHTML = '<a href="' + data.init_point + '" target="_blank">✅ Click aquí para Pagar $' + precio + ' MXN</a>';
                         } else {
-                            div.innerHTML = '❌ Error al crear el pago';
+                            div.innerHTML = '❌ Error: ' + (data.error || 'No se pudo crear el pago');
                         }
                     } catch (err) {
                         div.innerHTML = '❌ Error de conexión';
