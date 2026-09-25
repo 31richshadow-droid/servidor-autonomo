@@ -1,20 +1,21 @@
 const express = require('express');
+const path = require('path');
 const { MercadoPagoConfig, Preference } = require('mercadopago');
 
 const app = express();
 app.use(express.json());
 
-// Inicializar cliente de Mercado Pago usando la variable de entorno
+// Servir la interfaz web estática
+app.use(express.static(__dirname));
+
 const client = new MercadoPagoConfig({
   accessToken: process.env.MERCADOPAGO_TOKEN
 });
 
-// Ruta principal para probar conexión
 app.get('/', (req, res) => {
-  res.send('Servidor activo con integración de Mercado Pago 🚀');
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Ruta para crear una preferencia de pago
 app.post('/crear-pago', async (req, res) => {
   try {
     const preference = new Preference(client);
@@ -22,7 +23,7 @@ app.post('/crear-pago', async (req, res) => {
       body: {
         items: [
           {
-            title: req.body.titulo || 'Producto de prueba',
+            title: req.body.titulo || 'Producto',
             unit_price: Number(req.body.precio) || 100,
             quantity: 1,
             currency_id: 'MXN'

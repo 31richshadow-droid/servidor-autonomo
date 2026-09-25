@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Servidor Autónomo</title>
+  <style>
+    body { font-family: sans-serif; background: #121212; color: #fff; text-align: center; padding: 20px; }
+    .card { background: #1e1e1e; padding: 20px; border-radius: 12px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+    input, button { width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; font-size: 16px; }
+    input { background: #2a2a2a; color: #fff; }
+    button { background: #009ee3; color: #fff; font-weight: bold; cursor: pointer; }
+    button:hover { background: #0081b8; }
+    a { color: #00e676; text-decoration: none; word-break: break-all; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>🚀 Servidor Autónomo</h2>
+    <p>Generar enlace de cobro</p>
+    <input type="text" id="titulo" placeholder="Nombre del producto" value="Servicio Digital">
+    <input type="number" id="precio" placeholder="Precio MXN" value="150">
+    <button onclick="crearPago()">Crear Enlace de Pago</button>
+    <div id="resultado" style="margin-top: 20px;"></div>
+  </div>
+
+  <script>
+    async function crearPago() {
+      const titulo = document.getElementById('titulo').value;
+      const precio = document.getElementById('precio').value;
+      const divResultado = document.getElementById('resultado');
+      
+      divResultado.innerHTML = 'Cargando...';
+
+      try {
+        const res = await fetch('/crear-pago', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ titulo, precio })
+        });
+        const data = await res.json();
+        
+        if (data.init_point) {
+          divResultado.innerHTML = `<p>✅ Enlace generado:</p><a href="${data.init_point}" target="_blank">Pagar $${precio} MXN</a>`;
+        } else {
+          divResultado.innerHTML = '❌ Error al crear el pago';
+        }
+      } catch (err) {
+        divResultado.innerHTML = '❌ Error de conexión';
+      }
+    }
+  </script>
+</body>
+</html>
