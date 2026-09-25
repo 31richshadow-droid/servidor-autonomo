@@ -1,19 +1,14 @@
 {
   "name": "servidor-autonomo",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Servidor Autónomo Lili",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "dotenv": "^18.0.3",
-    "express": "^5.2.1",
-    "groq-sdk": "^1.6.0",
-    "mercadopago": "^3.6.1"
+    "express": "^4.18.2",
+    "groq-sdk": "^0.7.0",
+    "mercadopago": "^2.0.0"
   }
 }
