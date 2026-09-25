@@ -1,18 +1,13 @@
 import express from 'express';
 import cors from 'cors';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { MercadoPagoConfig, Preference } from 'mercadopago';
 import Groq from 'groq-sdk';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Desactivar caché HTTP
+// Forzar respuesta sin cache
 app.use((req, res, next) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     next();
@@ -28,9 +23,161 @@ if (process.env.GROQ_API_KEY) {
     groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 }
 
-// Servir la nueva interfaz de Lili directamente
+// Renderizar la interfaz del chat directamente desde la raiz
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.send(`
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lili - Nodo 01</title>
+  <style>
+    :root {
+      --bg: #090a0f;
+      --card: #12151e;
+      --accent: #7928ca;
+      --accent-light: #ff0080;
+      --text: #ffffff;
+      --text-dim: #a0a0b0;
+    }
+    body {
+      margin: 0;
+      padding: 15px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      box-sizing: border-box;
+    }
+    .header {
+      text-align: center;
+      padding: 12px;
+      background: var(--card);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      border: 1px solid #222533;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.3rem;
+      background: linear-gradient(45deg, var(--accent-light), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .chat-container {
+      flex: 1;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border: 1px solid #222533;
+    }
+    .msg {
+      max-width: 85%;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+    .msg.lili {
+      align-self: flex-start;
+      background: #1c2030;
+      border-left: 3px solid var(--accent-light);
+    }
+    .msg.user {
+      align-self: flex-end;
+      background: var(--accent);
+      color: #fff;
+    }
+    .input-area {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    input {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #222533;
+      background: var(--card);
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+    }
+    button {
+      padding: 12px 18px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(45deg, var(--accent), var(--accent-light));
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>LILI // NODO AUTÓNOMO 01</h1>
+  </div>
+
+  <div class="chat-container" id="chat">
+    <div class="msg lili">
+      Hola, soy Lili. Mi núcleo de IA y pasarela de cobro están operativos. ¿En qué puedo ayudarte hoy?
+    </div>
+  </div>
+
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="Escribe tu mensaje..." onkeydown="if(event.key==='Enter') enviar()">
+    <button onclick="enviar()">Enviar</button>
+  </div>
+
+  <script>
+    async function enviar() {
+      const input = document.getElementById('userInput');
+      const chat = document.getElementById('chat');
+      const text = input.value.trim();
+
+      if (!text) return;
+
+      const userMsg = document.createElement('div');
+      userMsg.className = 'msg user';
+      userMsg.textContent = text;
+      chat.appendChild(userMsg);
+      input.value = '';
+      chat.scrollTop = chat.scrollHeight;
+
+      const liliMsg = document.createElement('div');
+      liliMsg.className = 'msg lili';
+      liliMsg.textContent = 'Procesando...';
+      chat.appendChild(liliMsg);
+      chat.scrollTop = chat.scrollHeight;
+
+      try {
+        const res = await fetch('/lili-chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mensaje: text })
+        });
+        const data = await res.json();
+        liliMsg.innerHTML = data.respuesta || data.error || 'Sin respuesta.';
+      } catch (e) {
+        liliMsg.textContent = 'Error de conexión con el servidor.';
+      }
+      chat.scrollTop = chat.scrollHeight;
+    }
+  </script>
+
+</body>
+</html>
+    `);
 });
 
 app.post('/lili-chat', async (req, res) => {
