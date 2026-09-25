@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 const client = new MercadoPagoConfig({ 
-    accessToken: 'APP_USR-1811058243744664-092506-e05d5f60584104ceb9a1d2ffdb01da04-3712962673' 
+    accessToken: 'TU_TEST_TOKEN_AQUI' 
 });
 const preference = new Preference(client);
 
@@ -77,7 +77,7 @@ const manejarPago = async (req, res) => {
                 }]
             }
         });
-        res.json({ init_point: response.init_point });
+        res.json({ init_point: response.sandbox_init_point || response.init_point });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
