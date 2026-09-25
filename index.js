@@ -6,8 +6,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// REEMPLAZA EL TEXTO DE ABAJO CON TU TOKEN DE PRUEBA REAL QUE EMPIEZA CON TEST-
 const client = new MercadoPagoConfig({ 
-    accessToken: 'TU_TEST_TOKEN_AQUI' 
+    accessToken: 'TEST-AQUI_TU_TOKEN_DE_PRUEBA' 
 });
 const preference = new Preference(client);
 
