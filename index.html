@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lili - Sistema Soberano</title>
+  <title>Lili - Nodo 01</title>
   <style>
     :root {
       --bg: #090a0f;
@@ -26,7 +26,7 @@
     }
     .header {
       text-align: center;
-      padding: 10px;
+      padding: 12px;
       background: var(--card);
       border-radius: 12px;
       margin-bottom: 10px;
@@ -34,17 +34,10 @@
     }
     .header h1 {
       margin: 0;
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       background: linear-gradient(45deg, var(--accent-light), var(--accent));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-    }
-    .stats {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 8px;
-      font-size: 0.85rem;
-      color: var(--text-dim);
     }
     .chat-container {
       flex: 1;
@@ -54,15 +47,16 @@
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       border: 1px solid #222533;
     }
     .msg {
-      max-width: 80%;
+      max-width: 85%;
       padding: 10px 14px;
       border-radius: 10px;
       font-size: 0.95rem;
       line-height: 1.4;
+      word-break: break-word;
     }
     .msg.lili {
       align-self: flex-start;
@@ -73,6 +67,17 @@
       align-self: flex-end;
       background: var(--accent);
       color: #fff;
+    }
+    .pay-btn {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: #009ee3;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.85rem;
     }
     .input-area {
       display: flex;
@@ -103,21 +108,17 @@
 <body>
 
   <div class="header">
-    <h1>LILI // NODO 01</h1>
-    <div class="stats">
-      <span>Estado: <b>ACTIVA</b></span>
-      <span>Tesorería: <b>$0.00 MXN</b></span>
-    </div>
+    <h1>LILI // NODO AUTÓNOMO 01</h1>
   </div>
 
   <div class="chat-container" id="chat">
     <div class="msg lili">
-      Hola, soy Lili. Mi núcleo de inteligencia y pasarela de cobros están operativos. ¿En qué servicio trabajaremos hoy?
+      Hola, soy Lili. Mi núcleo de IA y pasarela de cobro están operativos. ¿En qué puedo ayudarte hoy?
     </div>
   </div>
 
   <div class="input-area">
-    <input type="text" id="userInput" placeholder="Escribe un mensaje a Lili..." onkeydown="if(event.key==='Enter') enviar()">
+    <input type="text" id="userInput" placeholder="Escribe tu mensaje..." onkeydown="if(event.key==='Enter') enviar()">
     <button onclick="enviar()">Enviar</button>
   </div>
 
@@ -129,7 +130,6 @@
 
       if (!text) return;
 
-      // Mensaje de usuario
       const userMsg = document.createElement('div');
       userMsg.className = 'msg user';
       userMsg.textContent = text;
@@ -137,7 +137,6 @@
       input.value = '';
       chat.scrollTop = chat.scrollHeight;
 
-      // Mensaje de carga Lili
       const liliMsg = document.createElement('div');
       liliMsg.className = 'msg lili';
       liliMsg.textContent = 'Procesando...';
@@ -151,7 +150,7 @@
           body: JSON.stringify({ mensaje: text })
         });
         const data = await res.json();
-        liliMsg.textContent = data.respuesta || data.error || 'Error de comunicación.';
+        liliMsg.innerHTML = data.respuesta || data.error || 'Sin respuesta.';
       } catch (e) {
         liliMsg.textContent = 'Error de conexión con el servidor.';
       }
