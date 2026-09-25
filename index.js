@@ -31,22 +31,22 @@ app.get('/', (req, res) => {
             <div class="card">
                 <h2>🚀 Servidor Autónomo</h2>
                 <p>Generar enlace de cobro</p>
-                <input type="text" id="servicio" value="Servicio Digital Lili" placeholder="Nombre del servicio">
+                <input type="text" id="titulo" value="Servicio Digital Lili" placeholder="Nombre del servicio">
                 <input type="number" id="precio" value="150" placeholder="Precio MXN">
-                <button onclick="generarPago()">Crear Enlace de Pago</button>
+                <button onclick="crearPago()">Crear Enlace de Pago</button>
                 <div id="resultado"></div>
             </div>
             <script>
-                async function generarPago() {
-                    const servicio = document.getElementById('servicio').value;
+                async function crearPago() {
+                    const titulo = document.getElementById('titulo').value;
                     const precio = document.getElementById('precio').value;
                     const div = document.getElementById('resultado');
                     div.innerHTML = '<p>Cargando enlace...</p>';
                     try {
-                        const res = await fetch('/crear-preferencia', {
+                        const res = await fetch('/crear-pago', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ titulo: servicio, precio })
+                            body: JSON.stringify({ titulo, precio })
                         });
                         const data = await res.json();
                         if (data.init_point) {
@@ -64,7 +64,7 @@ app.get('/', (req, res) => {
     `);
 });
 
-app.post('/crear-preferencia', async (req, res) => {
+const manejarPago = async (req, res) => {
     try {
         const { titulo, precio } = req.body;
         const response = await preference.create({
@@ -81,7 +81,10 @@ app.post('/crear-preferencia', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-});
+};
+
+app.post('/crear-pago', manejarPago);
+app.post('/crear-preferencia', manejarPago);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
