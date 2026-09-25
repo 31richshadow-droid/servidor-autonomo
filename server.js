@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 const client = new MercadoPagoConfig({ 
-    accessToken: 'TU_TOKEN_REAL_AQUI' 
+    accessToken: 'APP_USR-1811058243744664-092506-e05d5f60584104ceb9a1d2ffdb01da04-3712962673' 
 });
 const preference = new Preference(client);
 
@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
             <div class="card">
                 <h2>🚀 Servidor Autónomo</h2>
                 <p>Generar enlace de cobro</p>
-                <input type="text" id="servicio" value="Servicio Digital" placeholder="Nombre del servicio">
+                <input type="text" id="servicio" value="Servicio Digital Lili" placeholder="Nombre del servicio">
                 <input type="number" id="precio" value="150" placeholder="Precio MXN">
                 <button onclick="generarPago()">Crear Enlace de Pago</button>
                 <div id="resultado"></div>
@@ -41,7 +41,7 @@ app.get('/', (req, res) => {
                     const servicio = document.getElementById('servicio').value;
                     const precio = document.getElementById('precio').value;
                     const div = document.getElementById('resultado');
-                    div.innerHTML = '<p>Cargando...</p>';
+                    div.innerHTML = '<p>Cargando enlace...</p>';
                     try {
                         const res = await fetch('/crear-preferencia', {
                             method: 'POST',
