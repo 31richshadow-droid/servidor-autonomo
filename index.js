@@ -6,9 +6,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// REEMPLAZA EL TEXTO DE ABAJO CON TU TOKEN DE PRUEBA REAL QUE EMPIEZA CON TEST-
 const client = new MercadoPagoConfig({ 
-    accessToken: 'TEST-AQUI_TU_TOKEN_DE_PRUEBA' 
+    accessToken: 'APP_USR-1811058243744664-092506-e05d5f60584104ceb9a1d2ffdb01da04-3712962673' 
 });
 const preference = new Preference(client);
 
@@ -53,7 +52,7 @@ app.get('/', (req, res) => {
                         if (data.init_point) {
                             div.innerHTML = '<a href="' + data.init_point + '" target="_blank">✅ Click aquí para Pagar $' + precio + ' MXN</a>';
                         } else {
-                            div.innerHTML = '❌ Error: ' + (data.error || 'No se pudo crear el pago');
+                            div.innerHTML = '❌ Error: ' + JSON.stringify(data.error || data);
                         }
                     } catch (err) {
                         div.innerHTML = '❌ Error de conexión';
@@ -71,16 +70,20 @@ const manejarPago = async (req, res) => {
         const response = await preference.create({
             body: {
                 items: [{
-                    title: titulo || 'Servicio Digital Lili',
+                    title: String(titulo || 'Servicio Digital Lili'),
                     unit_price: Number(precio) || 150,
                     quantity: 1,
                     currency_id: 'MXN'
-                }]
+                }],
+                payer: {
+                    email: 'test_user_123456@testuser.com'
+                }
             }
         });
-        res.json({ init_point: response.sandbox_init_point || response.init_point });
+        res.json({ init_point: response.init_point || response.sandbox_init_point });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error(error);
+        res.status(500).json({ error: error.message || error });
     }
 };
 
