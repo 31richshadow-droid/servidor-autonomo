@@ -3,52 +3,161 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Servidor Autónomo</title>
+  <title>Lili - Sistema Soberano</title>
   <style>
-    body { font-family: sans-serif; background: #121212; color: #fff; text-align: center; padding: 20px; }
-    .card { background: #1e1e1e; padding: 20px; border-radius: 12px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-    input, button { width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; font-size: 16px; }
-    input { background: #2a2a2a; color: #fff; }
-    button { background: #009ee3; color: #fff; font-weight: bold; cursor: pointer; }
-    button:hover { background: #0081b8; }
-    a { color: #00e676; text-decoration: none; word-break: break-all; font-weight: bold; }
+    :root {
+      --bg: #090a0f;
+      --card: #12151e;
+      --accent: #7928ca;
+      --accent-light: #ff0080;
+      --text: #ffffff;
+      --text-dim: #a0a0b0;
+    }
+    body {
+      margin: 0;
+      padding: 15px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      box-sizing: border-box;
+    }
+    .header {
+      text-align: center;
+      padding: 10px;
+      background: var(--card);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      border: 1px solid #222533;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      background: linear-gradient(45deg, var(--accent-light), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+    .chat-container {
+      flex: 1;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border: 1px solid #222533;
+    }
+    .msg {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    .msg.lili {
+      align-self: flex-start;
+      background: #1c2030;
+      border-left: 3px solid var(--accent-light);
+    }
+    .msg.user {
+      align-self: flex-end;
+      background: var(--accent);
+      color: #fff;
+    }
+    .input-area {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    input {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #222533;
+      background: var(--card);
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+    }
+    button {
+      padding: 12px 18px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(45deg, var(--accent), var(--accent-light));
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>🚀 Servidor Autónomo</h2>
-    <p>Generar enlace de cobro</p>
-    <input type="text" id="titulo" placeholder="Nombre del producto" value="Servicio Digital">
-    <input type="number" id="precio" placeholder="Precio MXN" value="150">
-    <button onclick="crearPago()">Crear Enlace de Pago</button>
-    <div id="resultado" style="margin-top: 20px;"></div>
+
+  <div class="header">
+    <h1>LILI // NODO 01</h1>
+    <div class="stats">
+      <span>Estado: <b>ACTIVA</b></span>
+      <span>Tesorería: <b>$0.00 MXN</b></span>
+    </div>
+  </div>
+
+  <div class="chat-container" id="chat">
+    <div class="msg lili">
+      Hola, soy Lili. Mi núcleo de inteligencia y pasarela de cobros están operativos. ¿En qué servicio trabajaremos hoy?
+    </div>
+  </div>
+
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="Escribe un mensaje a Lili..." onkeydown="if(event.key==='Enter') enviar()">
+    <button onclick="enviar()">Enviar</button>
   </div>
 
   <script>
-    async function crearPago() {
-      const titulo = document.getElementById('titulo').value;
-      const precio = document.getElementById('precio').value;
-      const divResultado = document.getElementById('resultado');
-      
-      divResultado.innerHTML = 'Cargando...';
+    async function enviar() {
+      const input = document.getElementById('userInput');
+      const chat = document.getElementById('chat');
+      const text = input.value.trim();
+
+      if (!text) return;
+
+      // Mensaje de usuario
+      const userMsg = document.createElement('div');
+      userMsg.className = 'msg user';
+      userMsg.textContent = text;
+      chat.appendChild(userMsg);
+      input.value = '';
+      chat.scrollTop = chat.scrollHeight;
+
+      // Mensaje de carga Lili
+      const liliMsg = document.createElement('div');
+      liliMsg.className = 'msg lili';
+      liliMsg.textContent = 'Procesando...';
+      chat.appendChild(liliMsg);
+      chat.scrollTop = chat.scrollHeight;
 
       try {
-        const res = await fetch('/crear-pago', {
+        const res = await fetch('/lili-chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ titulo, precio })
+          body: JSON.stringify({ mensaje: text })
         });
         const data = await res.json();
-        
-        if (data.init_point) {
-          divResultado.innerHTML = `<p>✅ Enlace generado:</p><a href="${data.init_point}" target="_blank">Pagar $${precio} MXN</a>`;
-        } else {
-          divResultado.innerHTML = '❌ Error al crear el pago';
-        }
-      } catch (err) {
-        divResultado.innerHTML = '❌ Error de conexión';
+        liliMsg.textContent = data.respuesta || data.error || 'Error de comunicación.';
+      } catch (e) {
+        liliMsg.textContent = 'Error de conexión con el servidor.';
       }
+      chat.scrollTop = chat.scrollHeight;
     }
   </script>
+
 </body>
 </html>
